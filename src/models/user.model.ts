@@ -2,26 +2,40 @@ import * as jose from 'jose';
 import mongoose from 'mongoose';
 import { UserSchemaType } from '../types';
 
-const userSchema = new mongoose.Schema<UserSchemaType>({
-  name: {
-    type: String,
-    required: true,
+const userSchema = new mongoose.Schema<UserSchemaType>(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    avatar: {
+      type: String,
+      default: null,
+    },
+    username: String,
+    // friends: [
+    //   {
+    //     _id: {
+    //       type: Types.ObjectId,
+    //       required: true,
+    //     },
+    //     status: {
+    //       type: String,
+    //       enum: ['pending', 'approved', 'blocked', 'waiting_for_approval'],
+    //       default: 'pending',
+    //     },
+    //   },
+    // ],
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  avatar: {
-    type: String,
-    default: null,
-  },
-  username: {
-    type: String,
-    default: null,
-    unique: true,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 // eslint-disable-next-line func-names
 userSchema.methods.generateToken = async function () {

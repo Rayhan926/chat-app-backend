@@ -35,6 +35,7 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
         name: data.name,
         email: data.email,
         avatar: data.picture,
+        username: data.email.split('@')[0],
       });
 
       await user.save();

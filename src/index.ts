@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import express from 'express';
 import connectDB from './db';
 import authRoute from './routes/auth.route';
+import conversationRoute from './routes/conversation.route';
+import userRoute from './routes/user.route';
 import { expressErrorMiddleware } from './utils';
 // config dot env
 dotenv.config();
@@ -21,7 +23,11 @@ app.get('/', (req, res) => {
 });
 
 // auth routes
-app.use(authRoute);
+app.use('/auth', authRoute);
+// conversation routes
+app.use('/conversations', conversationRoute);
+// user routes
+app.use('/user', userRoute);
 
 // error middleware
 app.use(expressErrorMiddleware);
