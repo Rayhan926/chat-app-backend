@@ -1,5 +1,5 @@
 import * as jose from 'jose';
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { UserSchemaType } from '../types';
 
 const userSchema = new mongoose.Schema<UserSchemaType>(
@@ -18,19 +18,26 @@ const userSchema = new mongoose.Schema<UserSchemaType>(
       default: null,
     },
     username: String,
-    // friends: [
-    //   {
-    //     _id: {
-    //       type: Types.ObjectId,
-    //       required: true,
-    //     },
-    //     status: {
-    //       type: String,
-    //       enum: ['pending', 'approved', 'blocked', 'waiting_for_approval'],
-    //       default: 'pending',
-    //     },
-    //   },
-    // ],
+    friends: {
+      type: [Types.ObjectId],
+      ref: 'User',
+      default: [],
+    },
+    friendRequests: {
+      type: [Types.ObjectId],
+      ref: 'User',
+      default: [],
+    },
+    sentFriendRequests: {
+      type: [Types.ObjectId],
+      ref: 'User',
+      default: [],
+    },
+    status: {
+      type: String,
+      enum: ['online', 'offline'],
+      default: 'online',
+    },
   },
   {
     timestamps: true,

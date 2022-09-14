@@ -15,10 +15,10 @@ const conversationSchema = new mongoose.Schema<ConversationSchemaType>(
       type: String,
       required: true,
     },
-    messageType: {
+    status: {
       type: String,
-      enum: ['regular', 'friend_request'],
-      default: 'regular',
+      enum: ['sent', 'delivered', 'seen'],
+      default: 'sent',
     },
   },
   {

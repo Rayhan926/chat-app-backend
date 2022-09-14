@@ -1,9 +1,11 @@
+/* eslint-disable func-names */
+/* eslint-disable @typescript-eslint/ban-types */
 import mongoose, { Types } from 'mongoose';
-import { FriendSchemaType } from '../types';
+import { Friend, FriendModelType, FriendQueryHelpers } from '../types';
 
 const frinedStatusEnums = ['pending', 'approved', 'blocked', 'waiting_for_approval', 'rejected'];
 
-const friendSchema = new mongoose.Schema<FriendSchemaType>(
+const friendSchema = new mongoose.Schema<Friend, FriendModelType, {}, FriendQueryHelpers>(
   {
     senderId: {
       type: Types.ObjectId,
@@ -31,5 +33,9 @@ const friendSchema = new mongoose.Schema<FriendSchemaType>(
   }
 );
 
-const Friend = mongoose.model<FriendSchemaType>('Friend', friendSchema);
+friendSchema.query.test = function () {
+  return this.find();
+};
+
+const Friend = mongoose.model<Friend, FriendModelType>('Friend', friendSchema);
 export default Friend;
