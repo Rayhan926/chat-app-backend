@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 // eslint-disable-next-line object-curly-newline
-import { Document, HydratedDocument, Model, Query, Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export type ErrorWithStatusCode = {
   statusCode: number;
@@ -9,24 +9,6 @@ export type CreateResponse = {
   data?: unknown;
   message: string;
 };
-
-type FrinedStatusEnums = 'pending' | 'approved' | 'blocked' | 'waiting_for_approval' | 'rejected';
-
-export type Friend = {
-  senderId: Types.ObjectId | undefined;
-  receiverId: Types.ObjectId | undefined;
-  senderStatus?: FrinedStatusEnums;
-  receiverStatus?: FrinedStatusEnums;
-};
-
-type ProjectModelQuery = Query<any, HydratedDocument<Friend>, FriendQueryHelpers> &
-  FriendQueryHelpers;
-
-export type FriendQueryHelpers = {
-  test(this: ProjectModelQuery, name: string): ProjectModelQuery;
-};
-export type FriendModelType = Model<Friend, FriendQueryHelpers>;
-
 export type UserSchemaType = {
   name: string;
   email: string;

@@ -9,7 +9,7 @@ router.use(auth);
 
 router.get('/', getConversations);
 router.get('/chats/:id', getChats);
-router.post('/send', sendChat);
+router.post('/chat/send', sendChat);
 
 const conversationRoute = router;
 export default conversationRoute;

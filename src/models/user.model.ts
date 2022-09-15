@@ -58,8 +58,6 @@ userSchema.methods.generateToken = async function () {
     .setExpirationTime('7d')
     .sign(new TextEncoder().encode(process.env.JWT_SECRET));
 
-  console.log({ jwtToken });
-
   return jwtToken;
 };
 const User = mongoose.model<UserSchemaType>('User', userSchema);
