@@ -85,6 +85,29 @@ export const sendFriendRequest = async (req: Request, res: Response, next: NextF
   }
 };
 
+export const sentFriendRequests = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { _id }: UserType = (req as any).user;
+
+    const user = await User.findById(_id)
+      .select('sentFriendRequests')
+      .populate(
+        'sentFriendRequests',
+        '-friendRequests -friends -sentFriendRequests -__v -createdAt -updatedAt'
+      );
+
+    res.send(
+      createResponse({
+        message: 'Success',
+        data: user?.sentFriendRequests || [],
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
 export const getFriendRequests = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { _id }: UserType = (req as any).user;
@@ -115,7 +138,7 @@ export const acceptFriendRequest = async (req: Request, res: Response, next: Nex
     const acceptTo = await User.findById(acceptToId);
 
     if (!acceptTo || !acceptToId) {
-      return next(createHttpError(404, 'Failed to accept the friend request'));
+      return next(createHttpError(400, 'Failed to accept the friend request'));
     }
 
     if (
@@ -142,6 +165,55 @@ export const acceptFriendRequest = async (req: Request, res: Response, next: Nex
     res.send(
       createResponse({
         message: `You and ${acceptTo.name} are friends now!`,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const cancelFriendRequest = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user: UserType = (req as any).user;
+
+    const { id: cancelToId, type } = req.body;
+
+    const myToDelete = type === 'cancel' ? 'sentFriendRequests' : 'friendRequests';
+    const userToDelete = type === 'cancel' ? 'friendRequests' : 'sentFriendRequests';
+
+    if (!cancelToId) return next(createHttpError(400, 'Failed to cancel the friend request'));
+
+    const cancelTo = await User.findById(cancelToId);
+    if (!cancelTo) return next(createHttpError(400, 'Failed to cancel the friend request'));
+
+    // removeing user id
+    cancelTo[userToDelete] = cancelTo[userToDelete].filter((friend) => !friend?.equals(user._id));
+    user[myToDelete] = user[myToDelete].filter((friend) => !friend?.equals(cancelTo._id));
+    await cancelTo.save();
+    await user.save();
+
+    res.send(
+      createResponse({
+        message: 'Friend request cancelled',
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+export const removeAllFrineds = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const updatedUsers = await User.updateMany(
+      {},
+      { friends: [], friendRequests: [], sentFriendRequests: [] }
+    );
+
+    res.send(
+      createResponse({
+        message: 'Success',
+        data: updatedUsers,
       })
     );
   } catch (error) {

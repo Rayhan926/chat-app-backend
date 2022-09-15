@@ -21,8 +21,14 @@ export const getConversations = async (req: Request, res: Response, next: NextFu
 
     const getConversationMetaData = async () => {
       for (const friend of friends) {
+        // const lastMessage = await Conversation.findOne({
+        //   $or: [{ senderId: _id }, { receiverId: _id }],
+        // }).sort({ _id: -1 });
         const lastMessage = await Conversation.findOne({
-          $or: [{ senderId: _id }, { receiverId: _id }],
+          $and: [
+            { $or: [{ senderId: _id }, { receiverId: _id }] },
+            { $or: [{ senderId: friend?._id }, { receiverId: friend?._id }] },
+          ],
         }).sort({ _id: -1 });
 
         const unseenMessageCount = await Conversation.find()
@@ -30,6 +36,7 @@ export const getConversations = async (req: Request, res: Response, next: NextFu
           .ne('seen')
           .where({
             receiverId: _id,
+            senderId: friend?._id,
           })
           .count();
 
