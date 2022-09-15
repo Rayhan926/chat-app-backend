@@ -195,7 +195,8 @@ export const cancelFriendRequest = async (req: Request, res: Response, next: Nex
 
     res.send(
       createResponse({
-        message: 'Friend request cancelled',
+        message:
+          type === 'cancel' ? 'Friend request cancelled' : `You rejected ${cancelTo.name} request`,
       })
     );
   } catch (error) {

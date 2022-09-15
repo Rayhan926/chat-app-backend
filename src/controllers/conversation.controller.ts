@@ -69,8 +69,6 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
     const { _id }: UserType = (req as any).user;
     const { id } = req.params;
 
-    console.log({ _id, id });
-
     const chats = await Conversation.find().or([
       { senderId: _id },
       { receiverId: _id },

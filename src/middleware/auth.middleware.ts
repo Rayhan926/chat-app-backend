@@ -21,12 +21,12 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (req as any).user = user;
-    // await new Promise((resolve) =>
-    //   // eslint-disable-next-line no-promise-executor-return
-    //   setTimeout(() => {
-    //     resolve(null);
-    //   }, 1000)
-    // );
+    await new Promise((resolve) =>
+      // eslint-disable-next-line no-promise-executor-return
+      setTimeout(() => {
+        resolve(null);
+      }, 1000)
+    );
     next();
   } catch (error) {
     console.log(error);
