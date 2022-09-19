@@ -9,6 +9,8 @@ export const getUserController = async (req: Request, res: Response, next: NextF
   try {
     const { user }: any = req;
     delete user._doc.friends;
+    delete user._doc.friendRequests;
+    delete user._doc.sentFriendRequests;
 
     res.send(
       createResponse({

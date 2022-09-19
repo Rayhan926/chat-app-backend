@@ -15,7 +15,9 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
     });
 
     // check if user exist
-    const existingUser: any = await User.findOne({ email: data.email });
+    const existingUser: any = await User.findOne({ email: data.email }).select(
+      '-friends -sentFriendRequests -friendRequests'
+    );
 
     if (existingUser) {
       const token = await existingUser.generateToken();

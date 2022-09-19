@@ -13,13 +13,19 @@ const conversationSchema = new mongoose.Schema<ConversationSchemaType>(
     },
     message: {
       type: String,
-      required: true,
+      default: null,
     },
     status: {
       type: String,
       enum: ['sent', 'delivered', 'seen'],
       default: 'sent',
     },
+    attachments: [
+      {
+        path: String,
+        mimetype: String,
+      },
+    ],
   },
   {
     timestamps: true,

@@ -1,6 +1,8 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
+// import formidableMiddleware from 'express-formidable';
+import path from 'path';
 import connectDB from './db';
 import authRoute from './routes/auth.route';
 import conversationRoute from './routes/conversation.route';
@@ -13,7 +15,7 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // config cors
 app.use(cors());

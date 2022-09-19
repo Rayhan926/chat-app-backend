@@ -19,11 +19,18 @@ export type UserSchemaType = {
   sentFriendRequests: (Types.ObjectId | undefined)[];
   status: 'online' | 'offline';
 };
+
+type Attachments = {
+  path: string;
+  mimetype: string;
+};
+
 export type ConversationSchemaType = {
   senderId: Types.ObjectId | undefined;
   receiverId: Types.ObjectId | undefined;
-  message: string;
+  message?: string;
   status: 'sent' | 'delivered' | 'seen';
+  attachments: Attachments[];
 };
 
 export type UserType = Document<unknown, any, UserSchemaType> &
