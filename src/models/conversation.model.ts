@@ -24,6 +24,8 @@ const conversationSchema = new mongoose.Schema<ConversationSchemaType>(
       {
         path: String,
         mimetype: String,
+        width: Number,
+        height: Number,
       },
     ],
   },

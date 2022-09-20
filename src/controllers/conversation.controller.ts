@@ -101,13 +101,15 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
 export const sendChat = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { _id }: UserType = (req as any).user;
-    const { sendTo, message } = req.body;
+    const { sendTo, message, attachmentsMeta } = req.body;
+
+    const parsedAttachmentsMeta = attachmentsMeta && JSON.parse(attachmentsMeta);
 
     const files = req.files;
-
-    const formatFiles = (files as any).map((file: any) => ({
+    const formatFiles = (files as any).map((file: any, index: number) => ({
       path: file.path.replace('public', ''),
       mimetype: file.mimetype,
+      ...parsedAttachmentsMeta[index],
     }));
 
     const sendToUser = await User.findById(sendTo);

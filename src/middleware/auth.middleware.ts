@@ -25,7 +25,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
       // eslint-disable-next-line no-promise-executor-return
       setTimeout(() => {
         resolve(null);
-      }, 400)
+      }, 300)
     );
     next();
   } catch (error) {

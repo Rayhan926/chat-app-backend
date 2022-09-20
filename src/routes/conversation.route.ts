@@ -10,7 +10,7 @@ router.use(auth);
 
 router.get('/', getConversations);
 router.get('/chats/:id', getChats);
-router.post('/chat/send', upload.array('attachments', 5), sendChat);
+router.post('/chat/send', upload.array('attachments', 10), sendChat);
 
 const conversationRoute = router;
 export default conversationRoute;

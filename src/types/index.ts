@@ -23,6 +23,8 @@ export type UserSchemaType = {
 type Attachments = {
   path: string;
   mimetype: string;
+  width: number;
+  height: number;
 };
 
 export type ConversationSchemaType = {
