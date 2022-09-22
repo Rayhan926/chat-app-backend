@@ -72,8 +72,7 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
 
     await Conversation.updateMany(
       {
-        receiverId: _id,
-        senderId: id,
+        $or: [{ senderId: _id }, { receiverId: _id }, { senderId: id }, { receiverId: id }],
       },
       {
         $set: { status: 'seen' },
