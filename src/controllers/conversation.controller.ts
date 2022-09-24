@@ -126,6 +126,8 @@ export const sendChat = async (req: Request, res: Response, next: NextFunction) 
     });
     await chat.save();
 
+    req.io.to(sendToUser._id.toString()).emit('sendChat', chat);
+
     res.send(
       createResponse({
         message: 'Success',

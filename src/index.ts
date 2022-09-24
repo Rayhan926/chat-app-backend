@@ -2,24 +2,51 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 // import formidableMiddleware from 'express-formidable';
+import http from 'http';
 import path from 'path';
+import { Server } from 'socket.io';
 import connectDB from './db';
 import authRoute from './routes/auth.route';
 import conversationRoute from './routes/conversation.route';
 import userRoute from './routes/user.route';
 import { expressErrorMiddleware } from './utils';
-// config dot env
-dotenv.config();
 
 // initialize app
 const app = express();
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, '../public')));
+// config dot env
+dotenv.config();
 
 // config cors
 app.use(cors());
 
+app.use(express.json());
+app.use(express.static(path.join(__dirname, '../public')));
+
+// http server
+const httpServer = http.createServer(app);
+
+// init io
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.CLIENT_BASE_URL,
+  },
+});
+
+app.use((req: any, res, next) => {
+  req.io = io;
+  next();
+});
+
+// socket on connection
+io.on('connection', (socket) => {
+  console.log(`New connection ${socket.id}`);
+
+  socket.on('join', (userId) => {
+    console.log(`User joined: ${userId}`);
+    socket.join(userId);
+  });
+});
 app.get('/', (req, res) => {
   res.send('Hello');
 });
@@ -38,5 +65,5 @@ const port = process.env.PORT || 8080;
 
 connectDB().then(() => {
   console.log('Database connection successfull');
-  app.listen(port, () => console.log(`Server running on port http://localhost:${port}`));
+  httpServer.listen(port, () => console.log(`Server running on port http://localhost:${port}`));
 });
