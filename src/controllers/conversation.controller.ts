@@ -66,12 +66,16 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
 
     await Conversation.updateMany(
       {
-        conversationId: getConversationId(_id, id),
+        senderId: id,
       },
       {
         $set: { status: 'seen' },
       }
     );
+
+    req.io.to(id).emit('seen-messages', {
+      seenBy: _id.toString(),
+    });
 
     const chats = await Conversation.find({ conversationId: getConversationId(_id, id) });
 
@@ -117,7 +121,7 @@ export const sendChat = async (req: Request, res: Response, next: NextFunction) 
     });
     await chat.save();
 
-    req.io.to(sendToUser._id.toString()).emit('sendChat', chat);
+    req.io.to(sendToUser._id.toString()).emit('new-message', chat);
 
     res.send(
       createResponse({

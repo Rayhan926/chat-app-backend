@@ -46,6 +46,13 @@ io.on('connection', (socket) => {
     console.log(`User joined: ${userId}`);
     socket.join(userId);
   });
+
+  socket.on('saw-message', (data) => {
+    console.log({ data });
+    socket.to(data?.sawUserId).emit('seen-messages', {
+      seenBy: data?.sawBy,
+    });
+  });
 });
 app.get('/', (req, res) => {
   res.send('Hello');
