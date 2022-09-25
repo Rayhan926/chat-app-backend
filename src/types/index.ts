@@ -28,6 +28,7 @@ type Attachments = {
 };
 
 export type ConversationSchemaType = {
+  conversationId: string;
   senderId: Types.ObjectId | undefined;
   receiverId: Types.ObjectId | undefined;
   message?: string;

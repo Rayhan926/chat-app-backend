@@ -5,7 +5,7 @@ import createHttpError from 'http-errors';
 import Conversation from '../models/conversation.model';
 import User from '../models/user.model';
 import { UserType } from '../types';
-import { createResponse } from '../utils';
+import { createResponse, getConversationId } from '../utils';
 
 export const getConversations = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -22,14 +22,8 @@ export const getConversations = async (req: Request, res: Response, next: NextFu
 
     const getConversationMetaData = async () => {
       for (const friend of friends) {
-        // const lastMessage = await Conversation.findOne({
-        //   $or: [{ senderId: _id }, { receiverId: _id }],
-        // }).sort({ _id: -1 });
         const lastMessage = await Conversation.findOne({
-          $and: [
-            { $or: [{ senderId: _id }, { receiverId: _id }] },
-            { $or: [{ senderId: friend?._id }, { receiverId: friend?._id }] },
-          ],
+          conversationId: getConversationId(_id, friend?._id || ''),
         }).sort({ _id: -1 });
 
         const unseenMessageCount = await Conversation.find()
@@ -72,19 +66,15 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
 
     await Conversation.updateMany(
       {
-        $or: [{ senderId: _id }, { receiverId: _id }, { senderId: id }, { receiverId: id }],
+        conversationId: getConversationId(_id, id),
       },
       {
         $set: { status: 'seen' },
       }
     );
 
-    const chats = await Conversation.find().or([
-      { senderId: _id },
-      { receiverId: _id },
-      { senderId: id },
-      { receiverId: id },
-    ]);
+    const chats = await Conversation.find({ conversationId: getConversationId(_id, id) });
+
     res.send(
       createResponse({
         message: 'Success',
@@ -123,6 +113,7 @@ export const sendChat = async (req: Request, res: Response, next: NextFunction) 
       receiverId: sendToUser._id,
       status: messageStatus,
       attachments: files?.length ? formatFiles : [],
+      conversationId: getConversationId(_id, sendToUser._id),
     });
     await chat.save();
 

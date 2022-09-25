@@ -3,6 +3,10 @@ import { ConversationSchemaType } from '../types';
 
 const conversationSchema = new mongoose.Schema<ConversationSchemaType>(
   {
+    conversationId: {
+      type: String,
+      required: true,
+    },
     senderId: {
       type: Types.ObjectId,
       required: true,

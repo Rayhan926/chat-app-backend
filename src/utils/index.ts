@@ -1,4 +1,6 @@
+/* eslint-disable no-param-reassign */
 import { NextFunction, Request, Response } from 'express';
+import { Types } from 'mongoose';
 import { CreateResponse, ErrorWithStatusCode } from '../types';
 
 export const createResponse = ({ message, data }: CreateResponse): CreateResponse => ({
@@ -24,4 +26,15 @@ export const expressErrorMiddleware = (
   } else {
     next(err);
   }
+};
+
+type ObjectIdOrString = Types.ObjectId | string;
+export const getConversationId = (senderId: ObjectIdOrString, receiverId: ObjectIdOrString) => {
+  if (senderId instanceof Types.ObjectId) {
+    senderId = senderId.toString();
+  }
+  if (receiverId instanceof Types.ObjectId) {
+    receiverId = receiverId.toString();
+  }
+  return [senderId, receiverId].sort().join('');
 };
