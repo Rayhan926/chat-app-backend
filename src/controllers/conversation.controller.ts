@@ -64,18 +64,21 @@ export const getChats = async (req: Request, res: Response, next: NextFunction) 
     const { _id }: UserType = (req as any).user;
     const { id } = req.params;
 
-    await Conversation.updateMany(
+    const { modifiedCount } = await Conversation.updateMany(
       {
         senderId: id,
+        status: { $ne: 'seen' },
       },
       {
         $set: { status: 'seen' },
       }
     );
 
-    req.io.to(id).emit('seen-messages', {
-      seenBy: _id.toString(),
-    });
+    if (modifiedCount > 0) {
+      req.io.to(id).emit('seen-messages', {
+        seenBy: _id.toString(),
+      });
+    }
 
     const chats = await Conversation.find({ conversationId: getConversationId(_id, id) });
 

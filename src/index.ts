@@ -48,9 +48,15 @@ io.on('connection', (socket) => {
   });
 
   socket.on('saw-message', (data) => {
-    console.log({ data });
     socket.to(data?.sawUserId).emit('seen-messages', {
       seenBy: data?.sawBy,
+    });
+  });
+
+  socket.on('typing', (data) => {
+    socket.to(data?.to).emit('typing', {
+      typingStatus: data?.typingStatus,
+      from: data?.from,
     });
   });
 });
