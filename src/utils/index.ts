@@ -38,3 +38,4 @@ export const getConversationId = (senderId: ObjectIdOrString, receiverId: Object
   }
   return [senderId, receiverId].sort().join('');
 };
+export const getApiFullPath = (endPoint: string) => process.env.SERVER_BASE_URL + endPoint;

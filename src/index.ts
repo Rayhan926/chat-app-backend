@@ -1,3 +1,4 @@
+import axios from 'axios';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
@@ -9,7 +10,7 @@ import connectDB from './db';
 import authRoute from './routes/auth.route';
 import conversationRoute from './routes/conversation.route';
 import userRoute from './routes/user.route';
-import { expressErrorMiddleware } from './utils';
+import { expressErrorMiddleware, getApiFullPath } from './utils';
 
 // initialize app
 const app = express();
@@ -38,29 +39,7 @@ app.use((req: any, res, next) => {
   next();
 });
 
-// socket on connection
-io.on('connection', (socket) => {
-  console.log(`New connection ${socket.id}`);
-
-  socket.on('join', (userId) => {
-    console.log(`User joined: ${userId}`);
-    socket.join(userId);
-  });
-
-  socket.on('saw-message', (data) => {
-    socket.to(data?.sawUserId).emit('seen-messages', {
-      seenBy: data?.sawBy,
-    });
-  });
-
-  socket.on('typing', (data) => {
-    socket.to(data?.to).emit('typing', {
-      typingStatus: data?.typingStatus,
-      from: data?.from,
-    });
-  });
-});
-app.get('/', (req, res) => {
+app.all('/', (req, res) => {
   res.send('Hello');
 });
 
@@ -75,6 +54,50 @@ app.use('/user', userRoute);
 app.use(expressErrorMiddleware);
 
 const port = process.env.PORT || 8080;
+// socket on connection
+io.on('connection', (socket) => {
+  console.log(`New connection ${socket.id}`);
+
+  socket.on('join', (data) => {
+    socket.join(data.id);
+    axios
+      .post(
+        getApiFullPath('/user/update-socket-id'),
+        {
+          socketId: socket.id,
+        },
+        {
+          headers: {
+            authorization: data.token,
+          },
+        }
+      )
+      // .then((res) => console.log(res.data))
+      .catch(console.log);
+  });
+
+  socket.on('saw-message', (data) => {
+    socket.to(data?.sawUserId).emit('seen-messages', {
+      seenBy: data?.sawBy,
+    });
+  });
+
+  socket.on('typing', (data) => {
+    socket.to(data?.to).emit('typing', {
+      typingStatus: data?.typingStatus,
+      from: data?.from,
+    });
+  });
+
+  socket.on('disconnect', () => {
+    axios
+      .post(getApiFullPath('/user/remove-socket-id'), {
+        socketId: socket.id,
+      })
+      // .then((res) => console.log(res.data))
+      .catch(console.log);
+  });
+});
 
 connectDB().then(() => {
   console.log('Database connection successfull');

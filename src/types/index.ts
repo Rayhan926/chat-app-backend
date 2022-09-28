@@ -18,6 +18,8 @@ export type UserSchemaType = {
   friendRequests: (Types.ObjectId | undefined)[];
   sentFriendRequests: (Types.ObjectId | undefined)[];
   status: 'online' | 'offline';
+  lastSeen: Date;
+  socketId: string | null;
 };
 
 type Attachments = {

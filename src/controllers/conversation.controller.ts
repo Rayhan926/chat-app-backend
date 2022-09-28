@@ -126,6 +126,13 @@ export const sendChat = async (req: Request, res: Response, next: NextFunction) 
 
     req.io.to(sendToUser._id.toString()).emit('new-message', chat);
 
+    req.io.to(sendToUser._id.toString()).emit('typing', {
+      typingStatus: false,
+      to: sendToUser._id,
+      from: _id,
+    });
+    req.io.to(_id.toString()).emit('cancelTyping');
+
     res.send(
       createResponse({
         message: 'Success',

@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-nested-ternary */
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
@@ -217,6 +218,69 @@ export const removeAllFrineds = async (req: Request, res: Response, next: NextFu
       createResponse({
         message: 'Success',
         data: updatedUsers,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+export const updateUserSocketId = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { _id }: UserType = (req as any).user;
+    const socketId = req.body.socketId;
+
+    const user = await User.findById(_id);
+
+    if (!user) return next(createHttpError(404, 'User not found'));
+
+    for (const friend of user.friends) {
+      req.io.to(friend?.toString() || '').emit('user-online', {
+        userId: _id,
+      });
+    }
+
+    user.status = 'online';
+    user.socketId = socketId;
+    await user.save();
+
+    res.send(
+      createResponse({
+        message: 'Socket id updated',
+        data: socketId,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const removeUserSocketId = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const socketId = req.body.socketId;
+
+    const user = await User.findOne({ socketId });
+    if (!user) return next(createHttpError(404, 'User not found'));
+
+    const dateNow = new Date(Date.now());
+
+    user.socketId = null;
+    user.status = 'offline';
+    user.lastSeen = dateNow;
+
+    for (const friend of user.friends) {
+      req.io.to(friend?.toString() || '').emit('user-offline', {
+        userId: user._id,
+        lastSeen: dateNow,
+      });
+    }
+
+    await user.save();
+
+    res.send(
+      createResponse({
+        message: 'Success',
       })
     );
   } catch (error) {

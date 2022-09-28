@@ -38,6 +38,14 @@ const userSchema = new mongoose.Schema<UserSchemaType>(
       enum: ['online', 'offline'],
       default: 'online',
     },
+    lastSeen: {
+      type: Date,
+      default: Date.now(),
+    },
+    socketId: {
+      type: String,
+      default: null,
+    },
   },
   {
     timestamps: true,
