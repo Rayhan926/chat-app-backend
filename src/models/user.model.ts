@@ -64,7 +64,7 @@ userSchema.methods.generateToken = async function () {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
-    .sign(new TextEncoder().encode(process.env.JWT_SECRET));
+    .sign(new TextEncoder().encode('process.env.JWT_SECRET'));
 
   return jwtToken;
 };

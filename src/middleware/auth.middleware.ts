@@ -10,7 +10,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
 
     const splitedToken = token.split(' ')[1];
 
-    const jwt = new TextEncoder().encode(process.env.JWT_SECRET);
+    const jwt = new TextEncoder().encode('process.env.JWT_SECRET');
 
     const { payload } = await jose.jwtVerify(splitedToken, jwt);
 
