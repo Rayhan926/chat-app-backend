@@ -1,4 +1,3 @@
-import axios from 'axios';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
@@ -10,7 +9,7 @@ import connectDB from './db';
 import authRoute from './routes/auth.route';
 import conversationRoute from './routes/conversation.route';
 import userRoute from './routes/user.route';
-import { expressErrorMiddleware, getApiFullPath } from './utils';
+import { expressErrorMiddleware } from './utils';
 
 // initialize app
 const app = express();
@@ -61,20 +60,20 @@ io.on('connection', (socket) => {
 
   socket.on('join', (data) => {
     socket.join(data.id);
-    axios
-      .post(
-        getApiFullPath('/user/update-socket-id'),
-        {
-          socketId: socket.id,
-        },
-        {
-          headers: {
-            authorization: data.token,
-          },
-        }
-      )
-      // .then((res) => console.log(res.data))
-      .catch(console.log);
+    // axios
+    //   .post(
+    //     getApiFullPath('/user/update-socket-id'),
+    //     {
+    //       socketId: socket.id,
+    //     },
+    //     {
+    //       headers: {
+    //         authorization: data.token,
+    //       },
+    //     }
+    //   )
+    //   // .then((res) => console.log(res.data))
+    //   .catch(console.log);
   });
 
   socket.on('saw-message', (data) => {
@@ -91,12 +90,12 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    axios
-      .post(getApiFullPath('/user/remove-socket-id'), {
-        socketId: socket.id,
-      })
-      // .then((res) => console.log(res.data))
-      .catch(console.log);
+    // axios
+    //   .post(getApiFullPath('/user/remove-socket-id'), {
+    //     socketId: socket.id,
+    //   })
+    //   // .then((res) => console.log(res.data))
+    //   .catch(console.log);
   });
 });
 
