@@ -52,16 +52,6 @@ export const googleLogin = async (req: Request, res: Response, next: NextFunctio
         })
       );
     }
-
-    res.send(
-      createResponse({
-        message: 'Login success',
-        data: {
-          token: tokenId,
-          user: 'existingUser',
-        },
-      })
-    );
   } catch (error) {
     console.log(error);
     next(error);
