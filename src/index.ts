@@ -11,6 +11,7 @@ import path from 'path';
 import { Server } from 'socket.io';
 import { PORT } from './config/contants';
 import connectDB from './db';
+import authRoute from './routes/auth.route';
 import { expressErrorMiddleware, getApiFullPath } from './utils';
 
 // initialize app
@@ -45,7 +46,7 @@ app.all('/', (req, res) => {
 });
 
 // // auth routes
-// app.use('/auth', authRoute);
+app.use('/auth', authRoute);
 // // conversation routes
 // app.use('/conversations', conversationRoute);
 // // user routes
