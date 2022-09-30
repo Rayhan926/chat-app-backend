@@ -1,5 +1,6 @@
 import * as jose from 'jose';
 import mongoose, { Types } from 'mongoose';
+import { JWT_SECRET } from '../config/contants';
 import { UserSchemaType } from '../types';
 
 const userSchema = new mongoose.Schema<UserSchemaType>(
@@ -64,7 +65,7 @@ userSchema.methods.generateToken = async function () {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
-    .sign(new TextEncoder().encode('process.env.JWT_SECRET'));
+    .sign(new TextEncoder().encode(JWT_SECRET));
 
   return jwtToken;
 };

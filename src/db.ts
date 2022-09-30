@@ -1,8 +1,5 @@
 import mongoose from 'mongoose';
+import { DB_URL } from './config/contants';
 
-// const connectDB = () => mongoose.connect(process.env.DB_URL!);
-const connectDB = () =>
-  mongoose.connect(
-    'mongodb+srv://saymon:saymon@cluster0.rzqxyf6.mongodb.net/chat-app?retryWrites=true&w=majority'
-  );
+const connectDB = () => mongoose.connect(DB_URL!);
 export default connectDB;

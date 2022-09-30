@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { NextFunction, Request, Response } from 'express';
 import { Types } from 'mongoose';
+import { SERVER_BASE_URL } from '../config/contants';
 import { CreateResponse, ErrorWithStatusCode } from '../types';
 
 export const createResponse = ({ message, data }: CreateResponse): CreateResponse => ({
@@ -38,4 +39,4 @@ export const getConversationId = (senderId: ObjectIdOrString, receiverId: Object
   }
   return [senderId, receiverId].sort().join('');
 };
-export const getApiFullPath = (endPoint: string) => process.env.SERVER_BASE_URL + endPoint;
+export const getApiFullPath = (endPoint: string) => SERVER_BASE_URL + endPoint;

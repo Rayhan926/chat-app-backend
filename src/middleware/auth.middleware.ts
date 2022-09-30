@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import * as jose from 'jose';
+import { JWT_SECRET } from '../config/contants';
 import User from '../models/user.model';
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
@@ -10,7 +11,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
 
     const splitedToken = token.split(' ')[1];
 
-    const jwt = new TextEncoder().encode('process.env.JWT_SECRET');
+    const jwt = new TextEncoder().encode(JWT_SECRET);
 
     const { payload } = await jose.jwtVerify(splitedToken, jwt);
 

@@ -1,14 +1,8 @@
-// import axios from 'axios';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
-import http from 'http';
 import path from 'path';
-// import { Server } from 'socket.io';
-import connectDB from './db';
-import authRoute from './routes/auth.route';
-import conversationRoute from './routes/conversation.route';
-import userRoute from './routes/user.route';
+import { PORT } from './config/contants';
 import { expressErrorMiddleware } from './utils';
 
 // initialize app
@@ -24,12 +18,11 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
 // http server
-const httpServer = http.createServer(app);
+// const httpServer = http.createServer(app);
 
-// init io
+// // init io
 // const io = new Server(httpServer, {
 //   cors: {
-//     // origin: process.env.CLIENT_BASE_URL,
 //     origin: '*',
 //   },
 // });
@@ -43,18 +36,17 @@ app.all('/', (req, res) => {
   res.send('Hello');
 });
 
-// auth routes
-app.use('/auth', authRoute);
-// conversation routes
-app.use('/conversations', conversationRoute);
-// user routes
-app.use('/user', userRoute);
+// // auth routes
+// app.use('/auth', authRoute);
+// // conversation routes
+// app.use('/conversations', conversationRoute);
+// // user routes
+// app.use('/user', userRoute);
 
 // error middleware
 app.use(expressErrorMiddleware);
 
-const port = process.env.PORT || 8080;
-// socket on connection
+// // socket on connection
 // io.on('connection', (socket) => {
 //   console.log(`New connection ${socket.id}`);
 
@@ -99,7 +91,7 @@ const port = process.env.PORT || 8080;
 //   });
 // });
 
-connectDB().then(() => {
-  console.log('Database connection successfull');
-  httpServer.listen(port, () => console.log(`Server running on port http://localhost:${port}`));
-});
+// connectDB().then(() => {
+//   console.log('Database connection successfull');
+// });
+app.listen(PORT, () => console.log(`Server running on port http://localhost:${PORT}`));
