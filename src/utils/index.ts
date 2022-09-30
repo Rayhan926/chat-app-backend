@@ -17,6 +17,7 @@ export const expressErrorMiddleware = (
   next: NextFunction
 ) => {
   if (!res.headersSent) {
+    console.log('Error middleware if block', err);
     const { statusCode } = err;
     res.status(statusCode || 500).send(
       createResponse({
@@ -25,6 +26,7 @@ export const expressErrorMiddleware = (
       })
     );
   } else {
+    console.log('Error middleware else block', err);
     next(err);
   }
 };
