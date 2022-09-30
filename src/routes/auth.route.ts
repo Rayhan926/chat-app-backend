@@ -2,7 +2,7 @@ import express from 'express';
 
 const authRoute = express.Router();
 
-authRoute.all('/auth', (req, res) => {
+authRoute.all('/', (req, res) => {
   res.send('Auth');
 });
 

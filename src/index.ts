@@ -44,6 +44,9 @@ app.use((req: any, res, next) => {
 app.all('/', (req, res) => {
   res.send('Hello');
 });
+app.all('/test', (req, res) => {
+  res.send('Test');
+});
 
 // // auth routes
 app.use('/auth', authRoute);
