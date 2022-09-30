@@ -10,7 +10,6 @@ import http from 'http';
 import path from 'path';
 import { Server } from 'socket.io';
 import { PORT } from './config/contants';
-import { googleLogin } from './controllers/auth.controller';
 import connectDB from './db';
 import authRoute from './routes/auth.route';
 import { expressErrorMiddleware, getApiFullPath } from './utils';
@@ -51,7 +50,6 @@ app.all('/test', (req, res) => {
 
 // // auth routes
 app.use('/auth', authRoute);
-app.post('/auth/google-login', googleLogin);
 // // conversation routes
 // app.use('/conversations', conversationRoute);
 // // user routes
