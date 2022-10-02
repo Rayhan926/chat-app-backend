@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
 import express from 'express';
+import { NODE_ENV } from '../config/contants';
 import {
     acceptFriendRequest,
     cancelFriendRequest,
-    getFriendRequests, removeUserSocketId, sendFriendRequest,
+    getFriendRequests, removeAllFrineds, removeUsers, removeUserSocketId, sendFriendRequest,
     sentFriendRequests,
     updateUserSocketId
 } from '../controllers/user.controller';
@@ -11,7 +12,10 @@ import auth from '../middleware/auth.middleware';
 
 const router = express.Router();
 
-// router.get('/reset', removeAllFrineds);
+if (NODE_ENV === 'developement') {
+    router.get('/reset', removeAllFrineds);
+    router.get('/remove', removeUsers);
+}
 
 router.post('/remove-socket-id', removeUserSocketId);
 

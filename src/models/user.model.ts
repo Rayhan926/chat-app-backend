@@ -47,6 +47,10 @@ const userSchema = new mongoose.Schema<UserSchemaType>(
       type: String,
       default: null,
     },
+    newFriendRequestsNotification: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

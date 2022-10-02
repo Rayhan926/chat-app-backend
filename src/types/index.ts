@@ -20,6 +20,7 @@ export type UserSchemaType = {
   status: 'online' | 'offline';
   lastSeen: Date;
   socketId: string | null;
+  newFriendRequestsNotification: number;
 };
 
 type Attachments = {

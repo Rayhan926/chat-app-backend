@@ -2,6 +2,7 @@
 /* eslint-disable no-nested-ternary */
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
+import Conversation from '../models/conversation.model';
 import User from '../models/user.model';
 import { UserType } from '../types';
 import { createResponse } from '../utils';
@@ -74,11 +75,19 @@ export const sendFriendRequest = async (req: Request, res: Response, next: NextF
     toUser.friendRequests.push(user._id);
     user.sentFriendRequests.push(toUser._id);
 
+    toUser.newFriendRequestsNotification += 1;
+
     await toUser.save();
     await user.save();
 
+    req.io.to(toUser.id).emit('new-friend-request', {
+      user,
+      newFriendRequestsNotification: toUser.newFriendRequestsNotification,
+    });
+
     res.send(
       createResponse({
+        data: toUser,
         message: `Friend request sent. You will be notified once ${sendToUserName} accept your request`,
       })
     );
@@ -161,12 +170,17 @@ export const acceptFriendRequest = async (req: Request, res: Response, next: Nex
       (request) => !request?.equals(user._id)
     );
 
+    user.newFriendRequestsNotification -= 1;
+
     // saving users
     await user.save();
     await acceptTo.save();
 
+    req.io.to(acceptTo.id).emit('friend-request-accept', user);
+
     res.send(
       createResponse({
+        data: acceptTo,
         message: `You and ${acceptTo.name} are friends now!`,
       })
     );
@@ -193,8 +207,19 @@ export const cancelFriendRequest = async (req: Request, res: Response, next: Nex
     // removeing user id
     cancelTo[userToDelete] = cancelTo[userToDelete].filter((friend) => !friend?.equals(user._id));
     user[myToDelete] = user[myToDelete].filter((friend) => !friend?.equals(cancelTo._id));
+
+    if (type === 'reject') {
+      user.newFriendRequestsNotification -= 1;
+    }
+
     await cancelTo.save();
     await user.save();
+
+    if (type === 'cancel') {
+      req.io.to(cancelTo.id).emit('cancel-friend-request', user);
+    } else {
+      req.io.to(cancelTo.id).emit('reject-friend-request', user);
+    }
 
     res.send(
       createResponse({
@@ -211,13 +236,34 @@ export const removeAllFrineds = async (req: Request, res: Response, next: NextFu
   try {
     const updatedUsers = await User.updateMany(
       {},
-      { friends: [], friendRequests: [], sentFriendRequests: [] }
+      {
+        friends: [],
+        friendRequests: [],
+        sentFriendRequests: [],
+        newFriendRequestsNotification: 0,
+      }
     );
+
+    await Conversation.deleteMany();
 
     res.send(
       createResponse({
         message: 'Success',
         data: updatedUsers,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const removeUsers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await User.deleteMany();
+    res.send(
+      createResponse({
+        message: 'Success',
       })
     );
   } catch (error) {
