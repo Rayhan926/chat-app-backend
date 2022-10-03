@@ -33,7 +33,7 @@ const upload = multer({
     fieldSize: 1000000,
   },
   fileFilter: (req: Request, file: any, cb: any) => {
-    const acceptedMimeTypes = ['image/jpg', 'image/png', 'image/jpeg'];
+    const acceptedMimeTypes = ['image/jpg', 'image/png', 'image/jpeg', 'image/webp'];
     if (acceptedMimeTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {

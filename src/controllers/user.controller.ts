@@ -42,12 +42,9 @@ export const sendFriendRequest = async (req: Request, res: Response, next: NextF
     });
 
     if (!toUser) {
-      return res.send(
-        createResponse({
-          message: `Friend request sent. You will be notified once ${sendTo} accept your request`,
-        })
-      );
+      return next(createHttpError(401, `No user found with this username '${sendTo}'`));
     }
+
     const sendToUserName = toUser.name;
 
     const myFriends = user.friends;
