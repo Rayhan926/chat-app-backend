@@ -5,8 +5,8 @@ import { JWT_SECRET } from '../config/contants';
 import User from '../models/user.model';
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers?.authorization;
   try {
+    const token = req.headers?.authorization;
     if (!token) return next(createHttpError(401, 'Unauthorized'));
 
     const splitedToken = token.split(' ')[1];

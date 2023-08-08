@@ -7,7 +7,6 @@ import path from 'path';
 const uploadFolderPath = './public';
 const storage = multer.diskStorage({
   destination: (req: Request, file: any, cb: any) => {
-    console.log('path', fs.existsSync(uploadFolderPath));
     if (!fs.existsSync(uploadFolderPath)) {
       fs.mkdirSync(path.join(uploadFolderPath));
       cb(null, uploadFolderPath);
